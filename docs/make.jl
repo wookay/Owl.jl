@@ -4,7 +4,7 @@ makedocs(
     modules = [🦉],
     clean = false,
     format = :html,
-    sitename = "Owl.jl",
+    sitename = "🦉",
     authors = "WooKyoung Noh",
     pages = Any[
         "Home" => "index.md",

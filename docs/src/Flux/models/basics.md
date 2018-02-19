@@ -154,7 +154,7 @@ julia> linear2 = linear(3, 2)
 julia> model(x) = linear2(σ.(linear1(x)))
 model (generic function with 1 method)
 
-julia> model(x) # => 2-엘리먼트 벡터
+julia> model(x) # => 2-엘러먼트 벡터
 Tracked 2-element Array{Float64,1}:
  2.75582
  0.416809
@@ -178,7 +178,7 @@ julia> # 오버로드 하면 객체를 함수처럼 호출할 수 있음
 julia> a = Affine(10, 5)
 Affine(param([0.0252182 -1.99122 … -0.191235 0.294728; 1.13559 1.50226 … -2.43917 0.56976; … ; -0.735177 0.202646 … -0.301945 -0.183598; 1.05967 0.986786 … -1.57835 -0.0893871]), param([-0.39419, -1.26818, 0.757665, 0.941398, -0.783242]))
 
-julia> a(rand(10)) # => 5-엘리먼트 벡터
+julia> a(rand(10)) # => 5-엘러먼트 벡터
 Tracked 5-element Array{Float64,1}:
  -0.945544
  -0.575674
@@ -198,6 +198,8 @@ Flux는 많은 재밌는 레이어들이 있는데, 그것들을 직접 만드�
 (layer1 이름이 겹치니 REPL 새로 띄우자)
 
 ```julia-repl
+julia> using Flux
+
 julia> layer1 = Dense(10, 5, σ)
 Dense(10, 5, NNlib.σ)
 
@@ -209,13 +211,19 @@ model (generic function with 1 method)
 기다랗게 연결(chains) 할라믄, 다음과 같이 레이어의 리스트를 만드는게 좀 더 직관적임:
 
 ```julia-repl
-using Flux
+julia> layers = [Dense(10, 5, σ), Dense(5, 2), softmax]
+3-element Array{Any,1}:
+ Dense(10, 5, NNlib.σ)
+ Dense(5, 2)
+ NNlib.softmax
 
-layers = [Dense(10, 5, σ), Dense(5, 2), softmax]
+julia> model(x) = foldl((x, m) -> m(x), x, layers)
+model (generic function with 1 method)
 
-model(x) = foldl((x, m) -> m(x), x, layers)
-
-model(rand(10)) # => 2-엘리먼트 벡터
+julia> model(rand(10)) # => 2-엘러먼트 벡터
+Tracked 2-element Array{Float64,1}:
+ 0.593021
+ 0.406979
 ```
 
 편리하게 쓰라고 이것 역시 Flux에서 제공함:
@@ -227,13 +235,13 @@ julia> model2 = Chain(
          softmax)
 Chain(Dense(10, 5, NNlib.σ), Dense(5, 2), NNlib.softmax)
 
-julia> model2(rand(10)) # => 2-엘리먼트 벡터
+julia> model2(rand(10)) # => 2-엘러먼트 벡터
 Tracked 2-element Array{Float64,1}:
  0.172085
  0.827915
 ```
 
-고오급 딥러닝 라이브러리를 보기 시작한다; 어느만큼 간단하게 추상화 하는지 봤을 거임.
+고오급 딥러닝 라이브러리 같아 보이는 군; 어느만큼 간단하게 추상화 하는지 봤을 거임.
 줄리아 코드의 강력함을 잃지 않았음.
 
 이런 접근법의 좋은 점은 "모델"은 그냥 함수라는거 (아마도 훈련가능한 파라미터와 함께),

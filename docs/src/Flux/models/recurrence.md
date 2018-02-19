@@ -1,3 +1,5 @@
+똥싸고 나중에 번역함
+
 # Recurrent Models
 
 ## Recurrent Cells

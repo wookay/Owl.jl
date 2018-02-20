@@ -1,10 +1,11 @@
-똥싸고 나중에 번역함
+# 순환 모델(Recurrent Models)
 
-# Recurrent Models
+## 기억 세포(Recurrent Cells, 순환 셀, 뇌를 모방한 거)
 
-## Recurrent Cells
-
-In the simple feedforward case, our model `m` is a simple function from various inputs `xᵢ` to predictions `yᵢ`. (For example, each `x` might be an MNIST digit and each `y` a digit label.) Each prediction is completely independent of any others, and using the same `x` will always produce the same `y`.
+단순한 피드포워드(feedforward, 사이클(cycle)이나 루프(loop)가 없는 네트워크) 경우,
+모델 `m`은 여러 개의 입력 `xᵢ`에 대한 `yᵢ`를 예측하는 간단한 함수다.
+(예를 들어, `x`를 MNIST 숫자라 치면 `y`는 그것을 분류한 숫자.)
+예측은 서로 완전히 독립적이며 `x`가 같으면 `y`도 언제나 동일하다.
 
 ```julia
 y₁ = f(x₁)
@@ -13,106 +14,260 @@ y₃ = f(x₃)
 # ...
 ```
 
-Recurrent networks introduce a *hidden state* that gets carried over each time we run the model. The model now takes the old `h` as an input, and produces a new `h` as output, each time we run it.
+순환 네트워크는 *히든 상태(hidden state, 숨겨논 상태)*가 존재하며
+모델을 돌릴 때 매번 그 상태를 다음으로 넘긴다.
+그래서 이 모델은 그때마다 이전 `h`를 입력으로 받고,
+새로운 `h`를 출력으로 내 놓는다.
 
 ```julia
-h = # ... initial state ...
+h = # ... 초기 상태 ...
 h, y₁ = f(h, x₁)
 h, y₂ = f(h, x₂)
 h, y₃ = f(h, x₃)
 # ...
 ```
 
-Information stored in `h` is preserved for the next prediction, allowing it to function as a kind of memory. This also means that the prediction made for a given `x` depends on all the inputs previously fed into the model.
+`h`에 저장한 정보는 다음번 예측을 위해 유지하고,
+그래서 마치 함수의 메모리 같은 역할을 하게 한다.
+이것은 `x`에 대한 예측이
+이전까지 모델에 주입한 모든 입력으로부터
+영향을 받는 것을 의미한다.
 
-(This might be important if, for example, each `x` represents one word of a sentence; the model's interpretation of the word "bank" should change if the previous input was "river" rather than "investment".)
+(요거는 중요한 거니까 예를 들어, `x`를 문장에서의 한 단어라 보자;
+만약에 "bank"라는 영어 단어가 주어지면
+모델은 이전 입력이 "강 river" 이면 강둑으로,
+"투자 investment"면 은행으로 해석해야 한다.)
 
-Flux's RNN support closely follows this mathematical perspective. The most basic RNN is as close as possible to a standard `Dense` layer, and the output is also the hidden state.
+Flux의 RNN 지원은 수학적 관점을 지니고 있다.
+가장 기본이 되는 RNN은 표준 "Dense" 레이어를 따르고, 그 출력은 히든 상태이다.
 
-```julia
-Wxh = randn(5, 10)
-Whh = randn(5, 5)
-b   = randn(5)
+```julia-repl
+julia> using Flux
 
-function rnn(h, x)
-  h = tanh.(Wxh * x .+ Whh * h .+ b)
-  return h, h
-end
+julia> Wxh = randn(5, 10)
+5×10 Array{Float64,2}:
+ -0.197167   0.0931036  -1.13283   …   0.426711   1.5678      0.488363
+ -1.19948   -1.05618     1.057        -1.85708    2.05188    -0.732148
+ -0.848823   0.147774    1.66139      -0.777346  -0.0650354   0.36015
+ -0.380701   0.737349    0.426964      0.694122  -1.46597    -1.00572
+ -0.789044  -0.374745   -0.996698      0.505453  -0.117276    1.35148
 
-x = rand(10) # dummy data
-h = rand(5)  # initial hidden state
+julia> Whh = randn(5, 5)
+5×5 Array{Float64,2}:
+ -1.12946    -0.523065   0.0547692  -0.305124  -0.105809
+ -0.195351    0.588007   0.616959    0.779213  -0.145329
+ -0.265139   -0.535485  -0.300887    2.13263   -1.53089
+ -0.0537235  -1.47912   -0.883858    0.993426  -0.354738
+  0.486817    0.170843   0.0440353   0.177502   0.730423
 
-h, y = rnn(h, x)
+julia> b   = randn(5)
+5-element Array{Float64,1}:
+  0.982592
+ -0.724775
+  0.118081
+  0.140369
+ -1.07578
+
+julia> function rnn(h, x)
+         h = tanh.(Wxh * x .+ Whh * h .+ b)
+         return h, h
+       end
+rnn (generic function with 1 method)
+
+julia> x = rand(10) # 더미 데이터
+10-element Array{Float64,1}:
+ 0.312436
+ 0.384043
+ 0.972045
+ 0.194086
+ 0.496317
+ 0.654925
+ 0.0311892
+ 0.494105
+ 0.338846
+ 0.204689
+
+julia> h = rand(5)  # 초기 히든 상태
+5-element Array{Float64,1}:
+ 0.861124
+ 0.994686
+ 0.560054
+ 0.371721
+ 0.159454
+
+julia> h, y = rnn(h, x)
+([-0.963817, -0.198195, 0.903936, -0.686608, -0.839093], [-0.963817, -0.198195, 0.903936, -0.686608, -0.839093])
 ```
 
-If you run the last line a few times, you'll notice the output `y` changing slightly even though the input `x` is the same.
+마지막 `rnn`을 좀 더 돌려보면, 출력 `y`는 입력 `x`가 같은데도 조금씩 바뀌는 것을 알 수 있다.
 
-We sometimes refer to functions like `rnn` above, which explicitly manage state, as recurrent *cells*. There are various recurrent cells available, which are documented in the [layer reference](layers.md). The hand-written example above can be replaced with:
+```julia-repl
+julia> h, y = rnn(h, x)
+([0.812906, -0.767065, 0.945139, 0.0198447, -0.996763], [0.812906, -0.767065, 0.945139, 0.0198447, -0.996763])
 
-```julia
-using Flux
-
-rnn2 = Flux.RNNCell(10, 5)
-
-x = rand(10) # dummy data
-h = rand(5)  # initial hidden state
-
-h, y = rnn2(h, x)
+julia> h, y = rnn(h, x)
+([-0.647084, -0.799032, 0.997557, 0.902798, -0.984697], [-0.647084, -0.799032, 0.997557, 0.902798, -0.984697])
 ```
 
-## Stateful Models
+앞서 언급한 `rnn` 함수는 명시적으로 상태를 관리하는 기억 *세포(cells)* 이다.
+다양한 기억 세포가 존재하며 [레이어 참조](layers.md)에 관련 내용이 있다.
+위의 예제는 다음과 같이 바꿀 수 있다:
 
-For the most part, we don't want to manage hidden states ourselves, but to treat our models as being stateful. Flux provides the `Recur` wrapper to do this.
+```julia-repl
+julia> using Flux
 
-```julia
-x = rand(10)
-h = rand(5)
+julia> rnn2 = Flux.RNNCell(10, 5)
+RNNCell(10, 5, tanh)
 
-m = Flux.Recur(rnn, h)
+julia> x = rand(10) # 더미 데이터
+10-element Array{Float64,1}:
+ 0.142406
+ 0.944597
+ 0.973233
+ 0.434782
+ 0.715639
+ 0.763562
+ 0.280661
+ 0.293604
+ 0.496457
+ 0.173372
 
-y = m(x)
+julia> h = rand(5)  # 초기 히든 상태
+5-element Array{Float64,1}:
+ 0.602545
+ 0.998396
+ 0.558707
+ 0.637564
+ 0.0313308
+
+julia> h, y = rnn2(h, x)
+(param([-0.160217, -0.741263, 0.048164, 0.963063, 0.0301785]), param([-0.160217, -0.741263, 0.048164, 0.963063, 0.0301785]))
 ```
 
-The `Recur` wrapper stores the state between runs in the `m.state` field.
+## 상태를 갖는 모델
 
-If you use the `RNN(10, 5)` constructor – as opposed to `RNNCell` – you'll see that it's simply a wrapped cell.
+대부분의 경우, 히든 상태를 직접 관리하는 거는 귀찮으니까 모델이 상태를 갖게끔 처리할 수 있다.
+Flux는 `Recur` 래퍼를 제공한다.
 
-```julia
+```julia-repl
+julia> x = rand(10)
+10-element Array{Float64,1}:
+ 0.165593
+ 0.502313
+ 0.120926
+ 0.505827
+ 0.917068
+ 0.557163
+ 0.688472
+ 0.791826
+ 0.0838632
+ 0.709302
+
+julia> h = rand(5)
+5-element Array{Float64,1}:
+ 0.40008
+ 0.48858
+ 0.551568
+ 0.0688404
+ 0.0583865
+
+julia> m = Flux.Recur(rnn, h)
+Recur(rnn)
+
+julia> y = m(x)
+5-element Array{Float64,1}:
+  0.963414
+ -0.999974
+  0.739107
+  0.976241
+  0.986023
+```
+
+`Recur` 래퍼는 `m.state` 필드에 상태를 저장한다.
+
+`RNN(10, 5)` 생성자를 사용하면 - `RNNCell`과 대응하는 - 다음과 같이 이거는 단순히 래퍼 셀이다.
+
+```julia-repl
 julia> RNN(10, 5)
-Recur(RNNCell(Dense(15, 5)))
+Recur(RNNCell(10, 5, tanh))
 ```
 
-## Sequences
+## 시퀀스(Sequences, 연속되는 값)
 
-Often we want to work with sequences of inputs, rather than individual `x`s.
+종종 개별적인 `x` 보다는 연속되는 입력을 다루길 원한다.
 
-```julia
-seq = [rand(10) for i = 1:10]
+```julia-repl
+julia> seq = [rand(10) for i = 1:10]
+10-element Array{Array{Float64,1},1}:
+ [0.443911, 0.955247, 0.980153, 0.313181, 0.0426581, 0.354755, 0.113961, 0.222873, 0.865114, 0.14094]
+ [0.50466, 0.0204917, 0.890547, 0.574102, 0.301098, 0.944295, 0.95414, 0.36809, 0.341546, 0.474998]
+ [0.474114, 0.152628, 0.364967, 0.601978, 0.212361, 0.66016, 0.12101, 0.944988, 0.417781, 0.715282]
+ [0.0776375, 0.843099, 0.000618674, 0.352273, 0.977611, 0.801756, 0.550702, 0.311638, 0.285711, 0.0856441]
+ [0.603498, 0.863035, 0.89494, 0.506224, 0.840984, 0.13453, 0.43549, 0.216554, 0.361081, 0.0965758]
+ [0.236062, 0.407028, 0.357854, 0.875694, 0.0468227, 0.786622, 0.616748, 0.791976, 0.800668, 0.147169]
+ [0.739452, 0.38329, 0.961215, 0.113691, 0.381309, 0.57526, 0.0170709, 0.403656, 0.445509, 0.051497]
+ [0.956629, 0.624735, 0.14811, 0.202354, 0.484018, 0.250409, 0.0352729, 0.809209, 0.831828, 0.826355]
+ [0.388553, 0.42596, 0.736068, 0.454156, 0.626974, 0.641246, 0.444018, 0.768584, 0.118879, 0.416568]
+ [0.307721, 0.176393, 0.371934, 0.714272, 0.886859, 0.333667, 0.721609, 0.975586, 0.59609, 0.771424]
 ```
 
-With `Recur`, applying our model to each element of a sequence is trivial:
+`Recur`로 모델을 시퀀스의 각 항목마다 쉽게 적용할 수 있다:
 
-```julia
-m.(seq) # returns a list of 5-element vectors
+```julia-repl
+julia> m.(seq) # 5-엘러먼트 벡터의 리스트를 돌려준다
+10-element Array{Array{Float64,1},1}:
+ [0.958516, -0.996974, 0.640934, -0.440203, 0.991754]
+ [0.998417, -0.998238, 0.988128, 0.924522, 0.999099]
+ [0.943455, -0.999939, 0.94332, 0.638572, 0.999795]
+ [0.997841, -0.999912, 0.414106, 0.705974, 0.999871]
+ [0.9896, -0.96634, 0.903348, 0.805409, 0.949429]
+ [0.990047, -0.999849, 0.991448, 0.950895, 0.999938]
+ [0.980617, -0.988072, 0.978565, -0.785643, 0.985682]
+ [0.98617, -0.99938, -0.791134, 0.603178, 0.0937938]
+ [0.946547, -0.893022, 0.914559, 0.999905, 0.984556]
+ [0.989439, -0.999979, 0.964896, 0.978421, 0.999834]
 ```
 
-This works even when we've chain recurrent layers into a larger model.
+더 커다란 모델에 순환 레이어(recurrent layers)를 연쇄적(chain)으로 연결 할 수 있다.
 
-```julia
-m = Chain(LSTM(10, 15), Dense(15, 5))
-m.(seq)
+```julia-repl
+julia> m = Chain(LSTM(10, 15), Dense(15, 5))
+Chain(Recur(LSTMCell(10, 60)), Dense(15, 5))
+
+julia> m.(seq)
+10-element Array{TrackedArray{…,Array{Float64,1}},1}:
+ param([0.0779735, 0.0534096, -0.0245852, -0.0699291, -0.00650743])
+ param([0.203825, -0.0307184, -0.0940759, -0.100437, 0.0523315])
+ param([0.21071, -0.19635, -0.106985, -0.185204, 0.132647])
+ param([0.314643, -0.205525, -0.00144219, -0.165195, 0.197256])
+ param([0.351024, -0.116196, 0.00489051, -0.255343, 0.209503])
+ param([0.370406, -0.125797, -0.0506301, -0.253045, 0.179001])
+ param([0.349787, -0.091392, -0.0699977, -0.249944, 0.197391])
+ param([0.370064, -0.21158, -0.00144108, -0.337597, 0.24153])
+ param([0.396285, -0.240793, -0.0263459, -0.358695, 0.260678])
+ param([0.464372, -0.316526, -0.0295575, -0.352548, 0.251627])
 ```
 
-## Truncating Gradients
+## 기울기 잘라내기
 
-By default, calculating the gradients in a recurrent layer involves the entire history. For example, if we call the model on 100 inputs, calling `back!` will calculate the gradient for those 100 calls. If we then calculate another 10 inputs we have to calculate 110 gradients – this accumulates and quickly becomes expensive.
+기본적으로, 순환 레이어의 기울기를 계산하는 것은 전체 기록(history)을 내포한다.
+예를 들어 100개의 입력을 가진 모델을 실행할 때,
+`back!`을 하면 100개에 대한 기울기를 계산한다.
+그러고 다른 10개의 입력을 더 계산한다면 110개의 기울기를 계산해야 한다 - 이거는 누적되므로 빠르게 연산 비용이 증가한다.
 
-To avoid this we can *truncate* the gradient calculation, forgetting the history.
+이거를 막는 방법은 기울기 계산을 *잘라내어(truncate)* 기록을 지워주는 것이다.
 
-```julia
-truncate!(m)
+```julia-repl
+julia> Flux.truncate!(m)
+
 ```
 
-Calling `truncate!` wipes the slate clean, so we can call the model with more inputs without building up an expensive gradient computation.
+`truncate!`을 호출하면 깔끔이 청소해 준다.
+그래서 더 많은 입력의 모델을 실행해도 비싼 기울기 연산 없이 해낼 수 있다.
 
-`truncate!` makes sense when you are working with multiple chunks of a large sequence, but we may also want to work with a set of independent sequences. In this case the hidden state should be completely reset to its original value, throwing away any accumulated information. `reset!` does this for you.
+`truncate!`는 여러 개의 커다란 시퀀스 덩어리를 다룰 때 유용하지만, 서로 독립적인 시퀀스들을 다루고 싶을 때도 있다.
+그 경우 히든 상태는 원래 값으로 완전히 초기화 되어 누적된 정보를 버린다. 그렇게 하고 싶으면 `reset!`을 해 주자.
+```julia-repl
+julia> Flux.reset!(m)
+
+```

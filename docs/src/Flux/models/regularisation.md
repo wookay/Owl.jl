@@ -1,3 +1,5 @@
+똥 좀 누고 번역 할 것
+
 # Regularisation
 
 Applying regularisation to model parameters is straightforward. We just need to

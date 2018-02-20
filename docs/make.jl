@@ -12,7 +12,7 @@ makedocs(
             "Flux 홈" => "Flux/index.md",
             "모델 만들기" =>
               ["기본적인 것" => "Flux/models/basics.md",
-               "Recurrence" => "Flux/models/recurrence.md",
+               "순환(Recurrence)" => "Flux/models/recurrence.md",
                "Regularisation" => "Flux/models/regularisation.md",
                "Model Reference" => "Flux/models/layers.md"],
             "Training Models" =>

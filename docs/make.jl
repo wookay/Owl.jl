@@ -13,8 +13,8 @@ makedocs(
             "모델 만들기" =>
               ["기본적인 것" => "Flux/models/basics.md",
                "순환(Recurrence)" => "Flux/models/recurrence.md",
-               "Regularisation" => "Flux/models/regularisation.md",
-               "Model Reference" => "Flux/models/layers.md"],
+               "정규화(Regularisation)" => "Flux/models/regularisation.md",
+               "모델 참조(Model Reference)" => "Flux/models/layers.md"],
             "Training Models" =>
               ["Optimisers" => "Flux/training/optimisers.md",
                "Training" => "Flux/training/training.md"],

@@ -1,47 +1,57 @@
-똥 좀 누고 번역 할 것
+# 정규화(Regularisation)
 
-# Regularisation
+이번에는 모델 파라미터를 정규화 해 보자.
+`norm`과 같은 정규화를 해주는 적절한 함수를
+각 모델 파라미터에 적용하여 그 결과를 모든 loss에 더하도록 하자.
 
-Applying regularisation to model parameters is straightforward. We just need to
-apply an appropriate regulariser, such as `norm`, to each model parameter and
-add the result to the overall loss.
+예를 들어, 다음과 같은 간단한 regression을 보자.
 
-For example, say we have a simple regression.
+```julia-repl
+julia> using Flux
 
-```julia
-m = Dense(10, 5)
-loss(x, y) = crossentropy(softmax(m(x)), y)
+julia> m = Dense(10, 5)
+Dense(10, 5)
+
+julia> loss(x, y) = Flux.crossentropy(softmax(m(x)), y)
+loss (generic function with 1 method)
 ```
 
-We can regularise this by taking the (L2) norm of the parameters, `m.W` and `m.b`.
+`m.W`와 `m.b` 파라미터에 L2 norm을 취하여 정규화 해보자.
 
-```julia
-penalty() = norm(m.W) + norm(m.b)
-loss(x, y) = crossentropy(softmax(m(x)), y) + penalty()
+```julia-repl
+julia> penalty() = norm(m.W) + norm(m.b)
+penalty (generic function with 1 method)
+
+julia> loss(x, y) = Flux.crossentropy(softmax(m(x)), y) + penalty()
+loss (generic function with 1 method)
 ```
 
-When working with layers, Flux provides the `params` function to grab all
-parameters at once. We can easily penalise everything with `sum(norm, params)`.
+레이어를 이용하는 경우, Flux는 `params` 함수를 제공하여
+모든 파라미터를 한번에 가져올 수 있다.
+`sum(norm, params)`를 사용하여 전체를 쉽게 적용할 수 있다.
 
-```julia
+```julia-repl
 julia> params(m)
 2-element Array{Any,1}:
- param([0.355408 0.533092; … 0.430459 0.171498])
+ param([-0.61839 -0.556047 … -0.460808 -0.107646; 0.346293 -0.375076 … -0.608704 -0.181025; … ; -0.2226 -0.0992159 … 0.0707984 -0.429173; -0.331058 -0.291995 … 0.383368 0.156716])
  param([0.0, 0.0, 0.0, 0.0, 0.0])
 
 julia> sum(norm, params(m))
-26.01749952921026 (tracked)
+2.4130860599427706 (tracked)
 ```
 
-Here's a larger example with a multi-layer perceptron.
+좀 더 큰 규모의 예로, 멀티-레이어 퍼셉트론(perceptron)은 다음과 같다.
 
-```julia
-m = Chain(
-  Dense(28^2, 128, relu),
-  Dense(128, 32, relu),
-  Dense(32, 10), softmax)
+```julia-repl
+julia> m = Chain(
+         Dense(28^2, 128, relu),
+         Dense(128, 32, relu),
+         Dense(32, 10), softmax)
+Chain(Dense(784, 128, NNlib.relu), Dense(128, 32, NNlib.relu), Dense(32, 10), NNlib.softmax)
 
-loss(x, y) = crossentropy(m(x), y) + sum(norm, params(m))
+julia> loss(x, y) = Flux.crossentropy(m(x), y) + sum(norm, params(m))
+loss (generic function with 1 method)
 
-loss(rand(28^2), rand(10))
+julia> loss(rand(28^2), rand(10))
+39.128892409412174 (tracked)
 ```

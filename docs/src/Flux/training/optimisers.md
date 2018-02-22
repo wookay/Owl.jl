@@ -1,3 +1,5 @@
+다음 똥 타임
+
 # Optimisers
 
 Consider a [simple linear regression](../models/basics.md). We create some dummy data, calculate a loss, and backpropagate to calculate gradients for the parameters `W` and `b`.

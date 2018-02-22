@@ -3,7 +3,7 @@
 ## 기울기(Gradients, 경사) 구하기
 
 간단한 linear regression(리니어 리그레션, 직선 모양으로 그려지는 함수)을 생각해 보자.
-이것은 입력 `x`에 대해 출력 배열 `y`가 어떤 값이 나올지 예측하는 거임. (줄리아 REPL에서 예제를 따라해보면 좋음)
+이것은 입력 `x`에 대한 출력 배열 `y`를 예측한다. (줄리아 REPL에서 예제를 따라해보면 좋다)
 
 ```julia-repl
 julia> W = rand(2, 5)
@@ -29,9 +29,10 @@ julia> loss(x, y) # ~ 3
 3.1660692660286722
 ```
 
-예측을 더 잘하기 위해 `W`와 `b`의 기울기를 구하자. loss function(손실, 예측 실패율 함수)과 gradient descent(경사 하강, 내리막 기울기)를 해보면서.
-직접 손으로 기울기를 계산할 수 있지만
-Flux에서는 `W`와 `b`를 훈련시키는 *파라미터(parameters)*로 둘 수 있음.
+예측을 더 잘하기 위해 `W`와 `b`의 기울기를 구하자.
+loss function(손실, 예측 실패 함수)과 gradient descent(경사 하강, 내리막 기울기)를 해보면서.
+직접 손으로 기울기를 계산할 수도 있지만
+Flux에서는 `W`와 `b`를 훈련시키는 *파라미터(parameters)*로 둘 수 있다.
 
 ```julia-repl
 julia> using Flux.Tracker
@@ -54,8 +55,8 @@ julia> back!(l)
 ```
 
 `loss(x, y)`는 방금 전과 같은 수(3.1660692660286722)를 리턴,
-그런데 이제부터는 기울어지는 모양을 관찰 기록하여 값을 *추적(tracked)* 함.
-`back!`을 호출하면 `W`와 `b`의 기울기를 계산해.
+그런데 이제부터는 기울어지는 모양을 관찰 기록하여 값을 *추적(tracked)*  한다.
+`back!`을 호출하면 `W`와 `b`의 기울기를 계산한다.
 기울기가 뭔지 알아냈으니 `W`를 고쳐가면서 모델을 훈련하자.
 
 ```julia-repl
@@ -74,19 +75,20 @@ julia> loss(x, y) # ~ 2.5
 1.1327711929294395 (tracked)
 ```
 
-예측 실패(loss)가 조금 줄어들었음, `x` 예측이 목표 타겟 `y`에 좀 더 가까워졌다는 것을 의미함.
-데이터가 있으면 [모델 훈련하기](../training/training.md)도 시도할 수 있음.
+예측 실패(loss)가 조금 줄어들었다. `x` 예측이 목표 타겟 `y`에 좀 더 가까워졌다는 것을 의미한다.
+데이터가 있으면 [모델 훈련하기](../training/training.md)도 시도할 수 있다.
 
-복잡한 딥러닝이 Flux에서는 이와 같은 예제처럼 단순해 짐.
+복잡한 딥러닝이 Flux에서는 이와 같은 예제처럼 단순해진다.
 물론 모델의 파라미터 갯수가 백만개가 넘어가고 복잡한 제어 흐름을 갖게 되면 다른 모양을 갖겠지.
-그리고 이러한 복잡성을 다루는 법이 있음. 그런 것이 뭐가 있는지 한번 살펴보겠음.
+그리고 이러한 복잡성을 다루는 것에는 뭐가 있는지 한번 살펴보자.
 
 ## 레이어 만들기
 
-이제부터는 linear regression 보다 복잡한 모델을 만듦. 예를 들어, 두 개의 linear 레이어 사이에
+이제부터는 linear regression 보다 복잡한 모델을 만들어 보자.
+예를 들어, 두 개의 linear 레이어 사이에
 [시그모이드](https://en.wikipedia.org/wiki/Sigmoid_function) (`σ`) 처럼
-nonlinearity(비선형, 커브처럼 직선이 아닌 거)를 갖는 넘이 있을때.
-위의 스타일은 아래와 같이 쓸 수 있음:
+nonlinearity(비선형, 커브처럼 직선이 아닌 거)를 갖는 넘이 있을때,
+위의 스타일은 아래와 같이 쓸 수 있다:
 
 ```julia-repl
 julia> using Flux
@@ -129,7 +131,7 @@ Tracked 2-element Array{Float64,1}:
 ```
 
 작동은 하는데 중복 작업이 많아 보기에 좋지 않다 - 특히 레이어를 더 추가한다면.
-linear 레이어를 돌려주는 함수를 하나 만들어 이것들을 정리함.
+linear 레이어를 돌려주는 함수를 하나 만들어 이것들을 정리하자.
 
 ```julia-repl
 julia> function linear(in, out)
@@ -139,7 +141,7 @@ julia> function linear(in, out)
        end
 linear (generic function with 1 method)
 
-julia> linear1 = linear(5, 3) # linear1.W 할 수 있음 (x -> W * x .+ b 익명함수 리턴)
+julia> linear1 = linear(5, 3) # linear1.W 할 수 있닥 (익명함수 리턴)
 (::#3) (generic function with 1 method)
 
 julia> linear1.W
@@ -160,7 +162,7 @@ Tracked 2-element Array{Float64,1}:
  0.416809
 ```
 
-다른 방법으로는 struct로 타입을 만들어서 affine(어파인) 레이어를 명시적으로 표현하는 것이 있음.
+다른 방법으로는 struct로 타입을 만들어서 affine(어파인) 레이어를 명시적으로 표현하는 것이 있다.
 
 ```julia-repl
 julia> struct Affine
@@ -172,7 +174,7 @@ julia> Affine(in::Integer, out::Integer) =
          Affine(param(randn(out, in)), param(randn(out)))
 Affine
 
-julia> # 오버로드 하면 객체를 함수처럼 호출할 수 있음
+julia> # 오버로드 하면 객체를 함수처럼 호출할 수 있다
        (m::Affine)(x) = m.W * x .+ m.b
 
 julia> a = Affine(10, 5)
@@ -187,15 +189,15 @@ Tracked 5-element Array{Float64,1}:
  -0.843172
 ```
 
-축하드려염! Flux에서 나오는 `Dense` 레이어 만들기 성공한 거임.
-Flux는 많은 재밌는 레이어들이 있는데, 그것들을 직접 만드는 것 역시 아주 쉬움.
+축하합니다! Flux에서 나오는 `Dense` 레이어 만들기 성공!
+Flux는 많은 재밌는 레이어들이 있는데, 그것들을 직접 만드는 것 또한 정말 쉽다.
 
-(`Dense`와 다른 한가지 - 편의를 위해 activation(활성) 함수를 추가하는 거도 됨. `Dense(10, 5, σ)` 요런식으로.)
+(`Dense`와 다른 한가지 - 편의를 위해 activation(활성) 함수를 뒤에 추가할 수도 있다. `Dense(10, 5, σ)` 요런식으로.)
 
 ## 이쁘게 쌓아보자
 
-다음과 같은 모델을 만드는 것은 흔한 일임:
-(layer1 이름이 겹치니 REPL 새로 띄우자)
+다음과 같은 모델을 만드는 것은 흔하다:
+(layer1 이름이 겹치니 REPL을 새로 띄우자)
 
 ```julia-repl
 julia> using Flux
@@ -208,7 +210,7 @@ julia> # ...
 model (generic function with 1 method)
 ```
 
-기다랗게 연결(chains) 할라믄, 다음과 같이 레이어의 리스트를 만드는게 좀 더 직관적임:
+기다랗게 연결(chains) 할라믄, 다음과 같이 레이어의 리스트를 만드는게 좀 더 직관적이다:
 
 ```julia-repl
 julia> layers = [Dense(10, 5, σ), Dense(5, 2), softmax]
@@ -226,7 +228,7 @@ Tracked 2-element Array{Float64,1}:
  0.406979
 ```
 
-편리하게 쓰라고 이것 역시 Flux에서 제공함:
+편리하게 쓰라고 이것 역시 Flux에서 제공한다:
 
 ```julia-repl
 julia> model2 = Chain(
@@ -241,11 +243,11 @@ Tracked 2-element Array{Float64,1}:
  0.827915
 ```
 
-고오급 딥러닝 라이브러리 같아 보이는 군; 어느만큼 간단하게 추상화 하는지 봤을 거임.
-줄리아 코드의 강력함을 잃지 않았음.
+고오급 딥러닝 라이브러리 같아 보인다; 어느만큼 간단하게 추상화 하는지 보았을 것이다.
+줄리아 코드의 강력함을 놓치지 않았다.
 
-이런 접근법의 좋은 점은 "모델"은 그냥 함수라는거 (아마도 훈련가능한 파라미터와 함께),
-그마저도 함수 합성(∘)으로 간단하게 할 수 있음.
+이런 접근법의 좋은 점은 "모델"이 함수라는 것이다 (훈련가능한 파라미터와 함께),
+함수 합성(∘) 또한 가능하다.
 
 ```julia-repl
 julia> m = Dense(5, 2) ∘ Dense(10, 5, σ)
@@ -257,7 +259,7 @@ Tracked 2-element Array{Float64,1}:
  -0.202492
 ```
 
-마찬가지로, `Chain`은 줄리아 함수와 이쁘게 동작함.
+마찬가지로, `Chain`은 줄리아 함수와 이쁘게 동작한다.
 
 ```julia-repl
 julia> m = Chain(x -> x^2, x -> x+1)
@@ -269,11 +271,11 @@ julia> m(5) # => 26
 
 ## 레이어 도우미들
 
-Flux는 사용자의 커스텀 레이어를 도와주는 함수를 제공함, 다음과 같이 호출하면
+Flux는 사용자의 커스텀 레이어를 도와주는 함수를 제공한다. 다음과 같이 호출하면
 
 ```julia
 julia> Flux.treelike(Affine)
 adapt (generic function with 1 method)
 ```
 
-`Affine` 레이어에 부가적인 유용한 기능이 추가됨, [파라미터 모으기(collecting)](../training/optimisers.md)나 [GPU에서 처리하기](../gpu.md) 같은 거.
+`Affine` 레이어에 부가적인 유용한 기능이 추가된다, [파라미터 모으기(collecting)](../training/optimisers.md)나 [GPU에서 처리하기](../gpu.md) 같은 작업을 할 수 있다.

@@ -39,7 +39,7 @@ swish
 ## 정상화(Normalisation) & 정규화(Regularisation)
 
 이 레이어들은 네트워크의 구조에는 영향을 주지 않으면서
-훈련 시간(training times)의 개선 그리고 overfitting(오버피팅, 과적합)을 줄여 준다.
+훈련 시간(training times)의 개선 그리고 오버피팅(overfitting, 과적합)을 줄여 준다.
 
 ```@docs
 Flux.testmode!

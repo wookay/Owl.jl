@@ -2,7 +2,7 @@
 
 ## 기울기(Gradients, 경사) 구하기
 
-간단한 linear regression(리니어 리그레션, 직선 모양으로 그려지는 함수)을 생각해 보자.
+간단한 리니어 리그레션(linear regression, 직선 모양으로 그려지는 함수)을 생각해 보자.
 이것은 입력 `x`에 대한 출력 배열 `y`를 예측한다. (줄리아 REPL에서 예제를 따라해보면 좋다)
 
 ```julia-repl
@@ -75,7 +75,7 @@ julia> loss(x, y) # ~ 2.5
 1.1327711929294395 (tracked)
 ```
 
-예측 실패(loss)가 조금 줄어들었다. `x` 예측이 목표 타겟 `y`에 좀 더 가까워졌다는 것을 의미한다.
+예측 실패(loss)가 조금 줄어들었다. `x` 예측이 목표 대상(target) `y`에 좀 더 가까워졌다는 것을 의미한다.
 데이터가 있으면 [모델 훈련하기](../training/training.md)도 시도할 수 있다.
 
 복잡한 딥러닝이 Flux에서는 이와 같은 예제처럼 단순해진다.
@@ -84,10 +84,10 @@ julia> loss(x, y) # ~ 2.5
 
 ## 레이어 만들기
 
-이제부터는 linear regression 보다 복잡한 모델을 만들어 보자.
-예를 들어, 두 개의 linear 레이어 사이에
+이제부터는 리니어 리그레션 보다 복잡한 모델을 만들어 보자.
+예를 들어, 두 개의 리니어 레이어 사이에
 [시그모이드](https://en.wikipedia.org/wiki/Sigmoid_function) (`σ`) 처럼
-nonlinearity(비선형, 커브처럼 직선이 아닌 거)를 갖는 넘이 있을때,
+비선형(nonlinearity, 커브처럼 직선이 아닌 거)를 갖는 넘이 있을때,
 위의 스타일은 아래와 같이 쓸 수 있다:
 
 ```julia-repl
@@ -131,7 +131,7 @@ Tracked 2-element Array{Float64,1}:
 ```
 
 작동은 하는데 중복 작업이 많아 보기에 좋지 않다 - 특히 레이어를 더 추가한다면.
-linear 레이어를 돌려주는 함수를 하나 만들어 이것들을 정리하자.
+리니어 레이어를 돌려주는 함수를 하나 만들어 이것들을 정리하자.
 
 ```julia-repl
 julia> function linear(in, out)
@@ -162,7 +162,7 @@ Tracked 2-element Array{Float64,1}:
  0.416809
 ```
 
-다른 방법으로는 struct로 타입을 만들어서 affine(어파인) 레이어를 명시적으로 표현하는 것이 있다.
+다른 방법으로는 struct로 타입을 만들어서 어파인(affine) 레이어를 명시적으로 표현하는 것이 있다.
 
 ```julia-repl
 julia> struct Affine
@@ -192,7 +192,7 @@ Tracked 5-element Array{Float64,1}:
 축하합니다! Flux에서 나오는 `Dense` 레이어 만들기 성공!
 Flux는 많은 재밌는 레이어들이 있는데, 그것들을 직접 만드는 것 또한 정말 쉽다.
 
-(`Dense`와 다른 한가지 - 편의를 위해 activation(활성) 함수를 뒤에 추가할 수도 있다. `Dense(10, 5, σ)` 요런식으로.)
+(`Dense`와 다른 한가지 - 편의를 위해 활성(activation) 함수를 뒤에 추가할 수도 있다. `Dense(10, 5, σ)` 요런식으로.)
 
 ## 이쁘게 쌓아보자
 

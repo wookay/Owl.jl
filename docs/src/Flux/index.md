@@ -1,6 +1,5 @@
 
-
-[https://github.com/FluxML/Flux.jl](https://github.com/FluxML/Flux.jl) 자료를 번역하는 곳입니당
+ 🦉 [https://github.com/FluxML/Flux.jl](https://github.com/FluxML/Flux.jl) 자료를 번역하는 곳입니당
 
 
 # Flux: 줄리아 머신 러닝 라이브러리
@@ -22,4 +21,4 @@ Pkg.test("Flux") # 설치 똑바로 된건가 확인하기
 ```
 
 [기본적인 것](models/basics.md) 부터 시작하자.
-[동물원 모델(model zoo)](https://github.com/FluxML/model-zoo/)은 여러가지 공통 모델을 다루는데 그걸로 시작해도 좋다.
+[모델 동물원(model zoo)](https://github.com/FluxML/model-zoo/)은 여러가지 공통 모델을 다루는데 그걸로 시작해도 좋다.

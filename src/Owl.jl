@@ -1,4 +1,4 @@
-module 🦉
+module Owl
 
 # package code goes here
 

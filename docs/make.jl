@@ -9,7 +9,7 @@ makedocs(
     authors = "초보똥",
     pages = Any[
         "Home" => "index.md",
-        "Flux" => [
+        "Flux ✅" => [
             "Flux 홈" => "Flux/index.md",
             "모델 만들기" =>
               ["기본적인 것" => "Flux/models/basics.md",

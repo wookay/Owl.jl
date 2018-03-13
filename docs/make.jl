@@ -1,11 +1,12 @@
 using Documenter, Owl
 
 makedocs(
+    build = joinpath(@__DIR__, "local" in ARGS ? "build_local" : "build"),
     modules = [Owl],
     clean = false,
     format = :html,
     sitename = "🦉",
-    authors = "WooKyoung Noh",
+    authors = "초보똥",
     pages = Any[
         "Home" => "index.md",
         "Flux" => [
@@ -21,12 +22,16 @@ makedocs(
             "원-핫 인코딩" => "Flux/data/onehot.md",
             "GPU 지원" => "Flux/gpu.md",
             "저장 & 불러오기" => "Flux/saving.md",
-            "커뮤니티" => "Flux/community.md"],
+            "커뮤니티" => "Flux/community.md"
+        ],
         "DataFlow" => [
             "DataFlow 버티스(vertices)" => "DataFlow/vertices.md",
         ],
         "MacroTools" => [
             "MacroTools README" => "MacroTools/README.md",
+        ],
+        "FluxJS" => [
+            "FluxJS README" => "FluxJS/README.md",
         ],
         "GSoC" => [
             "Application Guidelines" => "soc/guidelines/index.md",

@@ -25,6 +25,9 @@ makedocs(
         "DataFlow" => [
             "DataFlow 버티스(vertices)" => "DataFlow/vertices.md",
         ],
+        "MacroTools" => [
+            "MacroTools README" => "MacroTools/README.md",
+        ],
         "GSoC" => [
             "Application Guidelines" => "soc/guidelines/index.md",
             "Data Science & Machine Learning" => "soc/projects/ml.md",

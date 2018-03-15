@@ -95,7 +95,7 @@ evalcb = throttle(30) do
 end
 ```
 
-이러면 `"model-checkpoint.bson"` 파일을 30초마다 업데이트 한다.
+이러면 `"model-checkpoint.bson"` 파일을 30초 마다 업데이트 한다.
 
 훈련시키는 동안에 모델을 연달아 저장하는 까리한 방법도 있는데 예를 들면
 

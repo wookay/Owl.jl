@@ -24,7 +24,7 @@ makedocs(
             "저장 & 불러오기" => "Flux/saving.md",
             "커뮤니티" => "Flux/community.md"
         ],
-        "DataFlow" => [
+        "DataFlow ✅" => [
             "DataFlow 버티스(vertices)" => "DataFlow/vertices.md",
         ],
         "MacroTools" => [
@@ -32,6 +32,9 @@ makedocs(
         ],
         "FluxJS" => [
             "FluxJS README" => "FluxJS/README.md",
+        ],
+        "Vinyl" => [
+            "Vinyl README" => "Vinyl/README.md",
         ],
         "GSoC" => [
             "Application Guidelines" => "soc/guidelines/index.md",

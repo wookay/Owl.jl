@@ -1,4 +1,13 @@
-using Documenter, Owl
+if haskey(ENV, "PRIVATE_DOCUMENTER")
+    include("../../PrivateDocumenter/src/Documenter.jl")
+    using .Documenter
+else
+    using Documenter
+end
+using Flux
+using Owl
+
+include("contrib/html_writer.jl")
 
 makedocs(
     build = joinpath(@__DIR__, "local" in ARGS ? "build_local" : "build"),

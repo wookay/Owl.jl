@@ -1,21 +1,16 @@
-if haskey(ENV, "PRIVATE_DOCUMENTER")
-    include("../../PrivateDocumenter/src/Documenter.jl")
-    using .Documenter
-else
-    using Documenter
-end
+using Documenter
 using Flux
-using Owl
+using NNlib # σ
+using Zygote
 
 include("contrib/html_writer.jl")
 
 makedocs(
-    build = joinpath(@__DIR__, "local" in ARGS ? "build_local" : "build"),
-    modules = [Owl],
-    clean = false,
-    format = :html,
     sitename = "🦉",
     authors = "초보똥",
+    clean = false,
+    build = joinpath(@__DIR__, "local" in ARGS ? "build_local" : "build"),
+    modules=[Flux, NNlib, Zygote],
     pages = Any[
         "Home" => "index.md",
         "Flux ✅" => [
@@ -36,19 +31,16 @@ makedocs(
         "DataFlow ✅" => [
             "DataFlow 버티스(vertices)" => "DataFlow/vertices.md",
         ],
-        "MacroTools" => [
-            "MacroTools README" => "MacroTools/README.md",
-        ],
-        "FluxJS" => [
-            "FluxJS README" => "FluxJS/README.md",
-        ],
-        "Vinyl" => [
-            "Vinyl README" => "Vinyl/README.md",
-        ],
-        "GSoC" => [
-            "Application Guidelines" => "soc/guidelines/index.md",
-            "Data Science & Machine Learning" => "soc/projects/ml.md",
+        "Zygote ⏳" => [
+            "Home" => "Zygote/index.md",
+            "Custom Adjoints" => "Zygote/adjoints.md",
+            "Utilities" => "Zygote/utils.md",
+            "Complex Differentiation" => "Zygote/complex.md",
+            "Flux" => "Zygote/flux.md",
+            "Profiling" => "Zygote/profiling.md",
+            "Internals" => "Zygote/internals.md",
+            "Glossary" => "Zygote/glossary.md"
         ],
     ],
-    html_prettyurls = !("local" in ARGS),
+    format = Documenter.HTML(assets = ["assets/custom.css"], prettyurls = !("local" in ARGS))
 )

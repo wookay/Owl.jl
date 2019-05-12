@@ -1,4 +1,6 @@
-using Base.Test
+module test_flux_basic
+
+using Test
 using Flux.Tracker
 
 W = # rand(2, 5)
@@ -21,9 +23,9 @@ W = param(W)
 b = param(b)
 l = loss(x, y)
 
-@test W isa Flux.TrackedArray
-@test b isa Flux.TrackedArray
-@test l isa Flux.Tracker.TrackedReal
+@test W isa TrackedArray
+@test b isa TrackedArray
+@test l isa Tracker.TrackedReal
 @test l.tracker.grad == 0
 
 @test W.grad == [0.0  0.0  0.0  0.0  0.0
@@ -36,3 +38,5 @@ back!(l)
 W.data .-= 0.1(W.grad)
 @test W.data ≈ [0.762798   0.110648   0.0127994  0.890913  0.473485
                -0.0639541  0.693267  -0.0163043  0.385161  0.714602] atol=0.00001
+
+end # module test_flux_basic

@@ -85,8 +85,15 @@ julia> opt() # `W`와 `b`를 변경하며 업데이트를 수행한다
 모든 최적화 함수는 넘겨받은 파라미터를 업데이트 하는 함수를 돌려준다.
 
 ```@docs
-SGD
+Descent
 Momentum
 Nesterov
+RMSProp
 ADAM
+AdaMax
+ADAGrad
+ADADelta
+AMSGrad
+NADAM
+ADAMW
 ```

@@ -5,7 +5,18 @@
 ```@docs
 Chain
 Dense
-Conv2D
+```
+
+## Convolution and Pooling Layers
+
+These layers are used to build convolutional neural networks (CNNs).
+
+```@docs
+Conv
+MaxPool
+MeanPool
+DepthwiseConv
+ConvTranspose
 ```
 
 ## 순환 레이어(Recurrent Layers)
@@ -16,7 +27,16 @@ Conv2D
 ```@docs
 RNN
 LSTM
+GRU
 Flux.Recur
+```
+
+## Other General Purpose Layers
+These are marginally more obscure than the Basic Layers.
+But in contrast to the layers described in the other sections are not readily grouped around a particular purpose (e.g. CNNs or RNNs).
+
+```@docs
+Maxout
 ```
 
 ## 활성 함수(Activation Functions)
@@ -45,5 +65,7 @@ swish
 Flux.testmode!
 BatchNorm
 Dropout
+AlphaDropout
 LayerNorm
+GroupNorm
 ```
